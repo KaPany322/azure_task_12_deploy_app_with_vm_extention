@@ -30,7 +30,7 @@ New-AzVirtualNetwork -Name $virtualNetworkName -ResourceGroupName $resourceGroup
 
 New-AzSshKey -Name $sshKeyName -ResourceGroupName $resourceGroupName -PublicKey $sshKeyPublicKey
 
-New-AzPublicIpAddress -Name $publicIpAddressName -ResourceGroupName $resourceGroupName -Location $location -Sku Basic -AllocationMethod Dynamic -DomainNameLabel $dnsLabel
+New-AzPublicIpAddress -Name $publicIpAddressName -ResourceGroupName $resourceGroupName -Location $location -Sku Standard  -AllocationMethod Static  -DomainNameLabel $dnsLabel
 
 New-AzVm `
 -ResourceGroupName $resourceGroupName `
@@ -41,7 +41,8 @@ New-AzVm `
 -SubnetName $subnetName `
 -VirtualNetworkName $virtualNetworkName `
 -SecurityGroupName $networkSecurityGroupName `
--SshKeyName $sshKeyName  -PublicIpAddressName $publicIpAddressName `
+-SshKeyName $sshKeyName  `
+-PublicIpAddressName $publicIpAddressName `
 -Credential $adminCredential
 
 # ↓↓↓ Write your code here ↓↓↓
@@ -52,6 +53,9 @@ $Params = @{
     Publisher          = 'Microsoft.Azure.Extensions'
     ExtensionType      = 'CustomScript'
     TypeHandlerVersion = '2.1'
-    Settings          = @{fileUris = @(https://raw.githubusercontent.com/KaPany322/azure_task_12_deploy_app_with_vm_extention/main/install-app.sh); commandToExecute = './install-app.sh'}
+    Settings = @{
+        fileUris = @('https://raw.githubusercontent.com/KaPany322/azure_task_12_deploy_app_with_vm_extention/main/install-app.sh')
+        commandToExecute = 'bash install-app.sh'
+    }
 }
 Set-AzVMExtension @Params
